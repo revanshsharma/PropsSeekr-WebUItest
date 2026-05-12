@@ -9,6 +9,7 @@ import {
 import { matchService } from '../services/api';
 import { format } from 'date-fns';
 import MultiSelectDropdown from '../components/MultiSelectDropdown';
+import { pageUi } from '../lib/pageUi';
 import * as XLSX from 'xlsx';
 
 type SortDirection = 'asc' | 'desc';
@@ -339,24 +340,21 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Filter Section (Keeping the UI, but we mostly rely on pagination based on API limits) */}
-      <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
-          <div className="flex items-center space-x-2">
-            <Layers className="w-5 h-5 text-slate-400" />
-            <h2 className="text-lg font-bold text-slate-800 tracking-tight">Filters</h2>
+      <section className={pageUi.panel}>
+        <div className={`${pageUi.panelHeader} ${pageUi.panelHeaderMuted}`}>
+          <div className={pageUi.panelHeaderIconWrap}>
+            <Layers className="w-5 h-5" />
           </div>
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={resetFilters}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-black text-slate-600 hover:border-primary-300 hover:text-primary-700 hover:bg-primary-50/40 transition-colors shadow-sm"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
+          <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className={pageUi.cardTitle}>Filters</h2>
+            <button type="button" onClick={resetFilters} className={`${pageUi.btnSecondary} w-full sm:w-auto`}>
+              <RotateCcw className="w-4 h-4" />
               Reset
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+        <div className={`${pageUi.panelBody} grid grid-cols-1 md:grid-cols-12 gap-4 items-end`}>
 
           <div className="md:col-span-4">
             <div className="relative">
@@ -370,7 +368,7 @@ const DashboardPage: React.FC = () => {
                   setPage(1);
                 }}
                 placeholder="Search in loaded results..."
-                className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none hover:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+                className={`${pageUi.input} pl-9`}
               />
             </div>
           </div>
@@ -417,21 +415,21 @@ const DashboardPage: React.FC = () => {
 
 
           <div className="md:col-span-4">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Budget Range</label>
+            <label className={pageUi.labelBlock}>Budget Range</label>
             <div className="grid grid-cols-2 gap-2">
               <input
                 value={filters.minBudget}
                 onChange={(e) => setFilters((p) => ({ ...p, minBudget: e.target.value }))}
                 placeholder="Min budget"
                 inputMode="numeric"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none hover:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+                className={pageUi.input}
               />
               <input
                 value={filters.maxBudget}
                 onChange={(e) => setFilters((p) => ({ ...p, maxBudget: e.target.value }))}
                 placeholder="Max budget"
                 inputMode="numeric"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none hover:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+                className={pageUi.input}
               />
             </div>
           </div>
@@ -439,10 +437,10 @@ const DashboardPage: React.FC = () => {
       </section>
 
       {/* Results Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className={pageUi.panel}>
+        <div className="px-6 py-5 border-b border-slate-100 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">Match Results</h2>
+            <h2 className={pageUi.title}>Match Results</h2>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black bg-slate-100 text-slate-700">
                 Showing <span className="mx-1 text-slate-900">{sortedMatches.length}</span> of{' '}
@@ -455,10 +453,7 @@ const DashboardPage: React.FC = () => {
               )}
             </div>
           </div>
-          <button 
-            onClick={exportToExcel}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-black shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-colors"
-          >
+          <button type="button" onClick={exportToExcel} className={`${pageUi.btnPrimary} w-full md:w-auto`}>
             <Download className="w-4 h-4" />
             Export Excel
           </button>
@@ -648,7 +643,7 @@ const DashboardPage: React.FC = () => {
                     setPageSize(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="bg-white border border-slate-200 rounded px-1.5 py-0.5 text-xs font-bold text-slate-700 outline-none hover:border-primary-400 focus:ring-1 focus:ring-primary-500 transition-colors mx-1"
+                  className={`${pageUi.selectSm} mx-1`}
                 >
                   <option value={10}>10</option>
                   <option value={20}>20</option>

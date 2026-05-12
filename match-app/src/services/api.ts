@@ -46,6 +46,11 @@ export const matchService = {
     // Currently relying on just pagination support on the generic endpoint.
     return api.get(`/matches?page=${page}&size=${pageSize}`);
   },
+
+  /** POST manual listing from Add Property form */
+  submitListing: async (body: Record<string, unknown>) => {
+    return api.post('/listing', body);
+  },
 };
 
 export default api;

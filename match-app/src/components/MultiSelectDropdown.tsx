@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { pageUi } from '../lib/pageUi';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -45,16 +46,17 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
   return (
     <div className="flex flex-col space-y-1.5" ref={dropdownRef}>
-      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">{label}</label>
+      <label className={pageUi.label}>{label}</label>
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           disabled={disabled}
           className={cn(
-            "w-full flex items-center justify-between px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium transition-all hover:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20",
-            isOpen && "border-primary-500 ring-2 ring-primary-500/20",
-            disabled && "bg-slate-50 text-slate-400 cursor-not-allowed hover:border-slate-200"
+            pageUi.input,
+            'flex items-center justify-between gap-2 text-left',
+            isOpen && 'border-primary-500 ring-2 ring-primary-500/20',
+            disabled && 'bg-slate-50 text-slate-400 cursor-not-allowed hover:border-slate-200'
           )}
         >
           <span className={cn("truncate", selected.length === 0 ? "text-slate-400" : "text-slate-900")}>
