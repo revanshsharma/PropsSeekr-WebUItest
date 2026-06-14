@@ -4,9 +4,9 @@ import {
   Target, Layers, 
   Download, ChevronLeft, ChevronRight as ChevronRightIcon,
   MapPin, IndianRupee, Maximize2, RotateCcw, Home,
-  ArrowUpDown, ArrowUp, ArrowDown
+  ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, Clock3, MessageSquareText, Radio
 } from 'lucide-react';
-import { matchService } from '../services/api';
+import { matchService, type DashboardResponse } from '../services/api';
 import { format } from 'date-fns';
 import MultiSelectDropdown from '../components/MultiSelectDropdown';
 import { pageUi } from '../lib/pageUi';
@@ -39,9 +39,9 @@ const DashboardPage: React.FC = () => {
   };
 
   const [filters, setFilters] = useState(initialFilters);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [, setError] = useState('');
+  const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -68,7 +68,7 @@ const DashboardPage: React.FC = () => {
     try {
       const response = await matchService.searchMatches(filters, page, pageSize);
       setData(response.data);
-    } catch (err) {
+    } catch {
       setError('Failed to fetch data.');
       setData(null);
     } finally {
@@ -339,6 +339,47 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className={`${pageUi.alertError} flex items-start gap-3`} role="alert">
+          <AlertCircle className="w-5 h-5 mt-0.5 shrink-0 text-rose-600" />
+          <span className="font-medium">{error}</span>
+        </div>
+      )}
+
+      {data && (
+        <section className={pageUi.panel} aria-label="Dashboard response details">
+          <div className={`${pageUi.panelBody} grid grid-cols-1 gap-5 md:grid-cols-3`}>
+            <div className="flex items-start gap-3">
+              <div className={pageUi.panelHeaderIconWrap}>
+                <Radio className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className={pageUi.label}>Source</p>
+                <p className="mt-1 break-words text-sm font-bold text-slate-900">{data.source || '-'}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className={pageUi.panelHeaderIconWrap}>
+                <MessageSquareText className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className={pageUi.label}>Message</p>
+                <p className="mt-1 break-words text-sm font-bold text-slate-900">{data.message || '-'}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className={pageUi.panelHeaderIconWrap}>
+                <Clock3 className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className={pageUi.label}>Date &amp; Time</p>
+                <p className="mt-1 break-words text-sm font-bold text-slate-900">{data.dateTime || '-'}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Filter Section (Keeping the UI, but we mostly rely on pagination based on API limits) */}
       <section className={pageUi.panel}>
         <div className={`${pageUi.panelHeader} ${pageUi.panelHeaderMuted}`}>
@@ -663,7 +704,7 @@ const DashboardPage: React.FC = () => {
               </button>
               <button 
                 disabled={data.pagination.currentPage === data.pagination.totalPages}
-                onClick={() => setPage(p => Math.min(data.pagination.totalPages, p + 1))}
+                onClick={() => setPage(p => Math.min(data.pagination?.totalPages ?? p, p + 1))}
                 className="flex items-center justify-center px-4 py-2 border border-slate-200 rounded-xl bg-white hover:border-primary-400 hover:text-primary-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm text-sm font-bold text-slate-600"
               >
                 Next

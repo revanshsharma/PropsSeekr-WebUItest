@@ -15,6 +15,18 @@ type UploadInitResponse = {
   key: string;
 };
 
+export type DashboardResponse = {
+  source: string;
+  message: string;
+  dateTime: string;
+  matches?: unknown[];
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalMatches: number;
+  };
+};
+
 export const matchService = {
   uploadFile: async (file: File) => {
     // Step 1: request a presigned upload URL from backend
@@ -44,7 +56,7 @@ export const matchService = {
   searchMatches: async (_filters: any, page = 1, pageSize = 20) => {
     // Note: If the api later supports filters, we can pass them as query params. 
     // Currently relying on just pagination support on the generic endpoint.
-    return api.get(`/matches?page=${page}&size=${pageSize}`);
+    return api.get<DashboardResponse>(`/matches?page=${page}&size=${pageSize}`);
   },
 
   /** POST manual listing from Add Property form */
